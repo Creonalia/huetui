@@ -2,6 +2,7 @@ use color_eyre::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use ratatui::{
     DefaultTerminal, Frame,
+    palette::Hsl,
     style::{Color, Style},
     widgets::{Block, Borders},
 };
@@ -14,9 +15,19 @@ fn main() -> Result<()> {
     result
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug)]
 pub struct App {
+    hsl: Hsl,
     exit: bool,
+}
+
+impl Default for App {
+    fn default() -> Self {
+        Self {
+            hsl: Hsl::new(0.0, 0.0, 1.0),
+            exit: false,
+        }
+    }
 }
 
 impl App {
@@ -32,7 +43,7 @@ impl App {
         frame.render_widget(
             Block::new()
                 .borders(Borders::empty())
-                .style(Style::default().bg(Color::White)),
+                .style(Style::default().bg(Color::from_hsl(self.hsl))),
             frame.area(),
         );
     }
