@@ -8,32 +8,45 @@ use ratatui::{
 
 fn main() -> Result<()> {
     color_eyre::install()?;
-    let terminal = ratatui::init();
-    let result = run(terminal);
+    let mut terminal = ratatui::init();
+    let result = App::default().run(&mut terminal);
     ratatui::restore();
     result
 }
 
-fn run(mut terminal: DefaultTerminal) -> Result<()> {
-    loop {
-        terminal.draw(render)?;
+#[derive(Debug, Default)]
+pub struct App {
+    exit: bool,
+}
+
+impl App {
+    fn run(&mut self, terminal: &mut DefaultTerminal) -> Result<()> {
+        while !self.exit {
+            terminal.draw(|frame| self.draw(frame))?;
+            self.handle_events()?
+        }
+        Ok(())
+    }
+
+    fn draw(&self, frame: &mut Frame) {
+        frame.render_widget(
+            Block::new()
+                .borders(Borders::empty())
+                .style(Style::default().bg(Color::White)),
+            frame.area(),
+        );
+    }
+
+    fn handle_events(&mut self) -> Result<()> {
         match event::read()? {
             Event::Key(key_event) if key_event.kind == KeyEventKind::Press => {
                 match key_event.code {
-                    KeyCode::Char('q') => break Ok(()),
+                    KeyCode::Char('q') => self.exit = true,
                     _ => {}
                 }
             }
             _ => {}
         }
+        Ok(())
     }
-}
-
-fn render(frame: &mut Frame) {
-    frame.render_widget(
-        Block::new()
-            .borders(Borders::empty())
-            .style(Style::default().bg(Color::White)),
-        frame.area(),
-    );
 }
