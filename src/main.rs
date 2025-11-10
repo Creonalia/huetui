@@ -1,17 +1,36 @@
+use clap::Parser;
 use color_eyre::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use ratatui::{
     DefaultTerminal, Frame,
-    palette::{ClampAssign, Hsl},
+    palette::{Clamp, ClampAssign, Hsl},
     style::{Color, Style},
     text::Line,
     widgets::{Block, Borders},
 };
 
+#[derive(Debug, Parser)]
+#[command()]
+struct Args {
+    #[arg(short = 'f', long, default_value_t = false)]
+    no_footer: bool,
+    #[arg(short = 'u', long, default_value_t = 0.0)]
+    hue: f32,
+    #[arg(short, long, default_value_t = 0.0)]
+    saturation: f32,
+    #[arg(short, long, default_value_t = 1.0)]
+    lightness: f32,
+}
+
 fn main() -> Result<()> {
     color_eyre::install()?;
     let mut terminal = ratatui::init();
-    let result = App::default().run(&mut terminal);
+    let args = Args::parse();
+    let result = App::new(
+        Hsl::new(args.hue, args.saturation, args.lightness).clamp(),
+        !args.no_footer,
+    )
+    .run(&mut terminal);
     ratatui::restore();
     result
 }
@@ -21,6 +40,16 @@ pub struct App {
     hsl: Hsl,
     show_footer: bool,
     exit: bool,
+}
+
+impl App {
+    pub fn new(hsl: Hsl, show_footer: bool) -> Self {
+        Self {
+            hsl,
+            show_footer,
+            exit: false,
+        }
+    }
 }
 
 impl Default for App {
