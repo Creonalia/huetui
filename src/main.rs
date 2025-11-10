@@ -9,15 +9,20 @@ use ratatui::{
     widgets::{Block, Borders},
 };
 
+/// TUI to fill the screen with a single adjustable color
 #[derive(Debug, Parser)]
-#[command()]
+#[command(about)]
 struct Args {
+    /// Hide footer on start
     #[arg(short = 'f', long, default_value_t = false)]
     no_footer: bool,
+    /// Initial value for hue. Range (-180,180], automatically wraps
     #[arg(short = 'u', long, default_value_t = 0.0)]
     hue: f32,
+    /// Initial value for saturation. Range [0.0, 1.0], automatically clamps
     #[arg(short, long, default_value_t = 0.0)]
     saturation: f32,
+    /// Initial value for lightness. Range [0.0, 1.0], automatically clamps
     #[arg(short, long, default_value_t = 1.0)]
     lightness: f32,
 }
