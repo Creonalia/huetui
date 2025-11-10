@@ -2,7 +2,7 @@ use color_eyre::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use ratatui::{
     DefaultTerminal, Frame,
-    palette::Hsl,
+    palette::{ClampAssign, Hsl},
     style::{Color, Style},
     widgets::{Block, Borders},
 };
@@ -53,8 +53,25 @@ impl App {
             Event::Key(key_event) if key_event.kind == KeyEventKind::Press => {
                 match key_event.code {
                     KeyCode::Char('q') => self.exit = true,
+
+                    KeyCode::Char('j') => self.hsl.lightness -= 0.05,
+                    KeyCode::Char('J') => self.hsl.lightness -= 0.01,
+                    KeyCode::Char('k') => self.hsl.lightness += 0.05,
+                    KeyCode::Char('K') => self.hsl.lightness += 0.01,
+
+                    KeyCode::Char('h') => self.hsl.hue -= 5.0,
+                    KeyCode::Char('H') => self.hsl.hue -= 1.0,
+                    KeyCode::Char('l') => self.hsl.hue += 5.0,
+                    KeyCode::Char('L') => self.hsl.hue += 1.0,
+
+                    KeyCode::Char('u') => self.hsl.saturation -= 0.05,
+                    KeyCode::Char('U') => self.hsl.saturation -= 0.01,
+                    KeyCode::Char('i') => self.hsl.saturation += 0.05,
+                    KeyCode::Char('I') => self.hsl.saturation += 0.01,
+
                     _ => {}
                 }
+                self.hsl.clamp_assign();
             }
             _ => {}
         }
