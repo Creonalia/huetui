@@ -24,8 +24,8 @@ struct Args {
 
 fn main() -> Result<()> {
     color_eyre::install()?;
-    let mut terminal = ratatui::init();
     let args = Args::parse();
+    let mut terminal = ratatui::init();
     let result = App::new(
         Hsl::new(args.hue, args.saturation, args.lightness).clamp(),
         !args.no_footer,
