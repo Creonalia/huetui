@@ -1,6 +1,10 @@
 use color_eyre::Result;
 use crossterm::event::{self, Event};
-use ratatui::{DefaultTerminal, Frame};
+use ratatui::{
+    DefaultTerminal, Frame,
+    style::{Color, Style},
+    widgets::{Block, Borders},
+};
 
 fn main() -> Result<()> {
     color_eyre::install()?;
@@ -20,5 +24,10 @@ fn run(mut terminal: DefaultTerminal) -> Result<()> {
 }
 
 fn render(frame: &mut Frame) {
-    frame.render_widget("hello world", frame.area());
+    frame.render_widget(
+        Block::new()
+            .borders(Borders::empty())
+            .style(Style::default().bg(Color::White)),
+        frame.area(),
+    );
 }
