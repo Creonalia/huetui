@@ -22,7 +22,10 @@
       eachSystem = f:
         nixpkgs.lib.genAttrs systems
         (system: f { pkgs = import nixpkgs { inherit system overlays; }; });
+
     in {
+      packages = eachSystem
+        ({ pkgs }: { default = pkgs.callPackage ./default.nix { }; });
       devShells =
         eachSystem ({ pkgs }: { default = pkgs.callPackage ./shell.nix { }; });
     };
