@@ -1,5 +1,5 @@
 use color_eyre::Result;
-use crossterm::event::{self, Event};
+use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use ratatui::{
     DefaultTerminal, Frame,
     style::{Color, Style},
@@ -17,8 +17,14 @@ fn main() -> Result<()> {
 fn run(mut terminal: DefaultTerminal) -> Result<()> {
     loop {
         terminal.draw(render)?;
-        if matches!(event::read()?, Event::Key(_)) {
-            break Ok(());
+        match event::read()? {
+            Event::Key(key_event) if key_event.kind == KeyEventKind::Press => {
+                match key_event.code {
+                    KeyCode::Char('q') => break Ok(()),
+                    _ => {}
+                }
+            }
+            _ => {}
         }
     }
 }
